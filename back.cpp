@@ -16,7 +16,7 @@ double ballXspeed = 0;
 double ballYspeed = 0;
 double scoreWidth = 0;
 
-int firstInit() {
+int firstInit() {	
 	tableX = 2 * SIZEFACTOR;
 	tableY = 4 * SIZEFACTOR;	
 	ballX = tableX / 2;
