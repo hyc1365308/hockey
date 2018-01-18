@@ -6,6 +6,7 @@
 #include <stdio.h>  
 #include <stdlib.h> 
 #include <math.h>
+//#include "back.cpp"
 
 //定义两个纹理对象编号  
 GLuint texGround;
@@ -254,7 +255,7 @@ void draw_puck() {
 
 	glPushMatrix();
 	glTranslatef(0.0, 6.6, 0.0);
-	glTranslatef(3.0, 0.0, 0.0);
+	glTranslatef(-6.0 + ballX, 0.0, 12.0 - ballY);
 	glRotatef(90.0, 1.0, 0.0, 0.0);
 	glColor3f(1.0f, 0.0f, 0.0f);
 	GLUquadricObj *objCylinder = gluNewQuadric();
@@ -341,7 +342,7 @@ void display(void)
 }
 
 void display_ctl(void) {
-
+	update();
 	display();
 }
 
