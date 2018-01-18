@@ -23,8 +23,8 @@ int firstInit() {
 	ballSpeed = 0.01 * SIZEFACTOR;
 	ballRadium = 0.1 * SIZEFACTOR;
 	malletRadium = 0.15 * SIZEFACTOR;
-	ballXspeed = 1 * SIZEFACTOR;
-	ballYspeed = 0 * SIZEFACTOR;
+	ballXspeed = 0.011 * SIZEFACTOR;
+	ballYspeed = 0.05 * SIZEFACTOR;
 	scoreWidth = 0.8 * SIZEFACTOR;
 	return 1;
 }

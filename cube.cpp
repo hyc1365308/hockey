@@ -366,6 +366,7 @@ int main(int argc, char* argv[])
 {
 	// GLUT≥ı ºªØ  
 	glutInit(&argc, argv);
+	firstInit();
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 200);
 	glutInitWindowSize(WindowWidth, WindowHeight);
