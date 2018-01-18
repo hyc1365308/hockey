@@ -346,7 +346,7 @@ void display_ctl(void) {
 	display();
 }
 
-void keyboard(unsigned char key) {
+void keyboard(unsigned char key, int x, int y) {
 	switch (key)
 	{
 	case 'a':
