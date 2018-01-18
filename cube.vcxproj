@@ -139,7 +139,11 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="cube.c" />
+    <ClCompile Include="back.cpp" />
+    <ClCompile Include="cube.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="back.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
