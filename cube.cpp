@@ -23,7 +23,9 @@ int tablepos[4][2] = {
 	244, 116,
 	355, 116,
 };
-int mid = 200;
+int game_end = 0;
+
+double normal_x, normal_y;// 暂时存储鼠标的信息
 
 // 函数power_of_two用于判断一个整数是不是2的整数次幂  
 int power_of_two(int n)
@@ -372,23 +374,43 @@ void display(void)
 }
 
 void display_ctl(void) {
-	int code = update();
-	display();
-	if (code == 2) {
-		glColor3f(0.0, 0.0, 1.0);
-		glRasterPos3f(0.0, 8.0, 0.0);  //起始位置  
-		XPrintString("You win!");
+	playerX = normal_x;
+	playerY = normal_y;
+	if (game_end == 0) {
+		int code = update();
+		display();
+		if (code == 2) {
+			glColor3f(0.0, 0.0, 1.0);
+			glRasterPos3f(0.0, 8.0, 0.0);  //起始位置  
+			XPrintString("You win!");
+			game_end = 2;
+		}
+		else if (code == 3) {
+			glColor3f(0.0, 0.0, 1.0);
+			glRasterPos3f(0.0, 8.0, 0.0);  //起始位置  
+			XPrintString("You lose!");
+			game_end = 3;
+		}
 	}
-	else if (code == 3) {
-		glColor3f(0.0, 0.0, 1.0);
-		glRasterPos3f(0.0, 8.0, 0.0);  //起始位置  
-		XPrintString("You lose!");
+	else {
+		display();
+		if (game_end == 2) {
+			glColor3f(0.0, 0.0, 1.0);
+			glRasterPos3f(0.0, 8.0, 0.0);  //起始位置  
+			XPrintString("You win!");
+		}
+		else if (game_end == 3) {
+			glColor3f(0.0, 0.0, 1.0);
+			glRasterPos3f(0.0, 8.0, 0.0);  //起始位置  
+			XPrintString("You lose!");
+		}
 	}
 	glutSwapBuffers();
 }
 
 void gameReset() {
 	printf("game reset!\n");
+	game_end = 0;
 }
 
 void keyboard(unsigned char key, int x, int y) {
@@ -423,7 +445,7 @@ void mouse(int x, int y) {
 	double k2 = -k1;
 	double b2 = tablepos[1][1] - k2 * tablepos[1][0];
 
-	double normal_x, normal_y;/*
+	/*
 	if (y - k1 * x - b1 < 0) {
 		if (y - k2 * x - b2 < 0) {
 			// 在桌子上边往上
@@ -472,8 +494,6 @@ void mouse(int x, int y) {
 				normal_x = __min(__max(normal_x, 0.9), 11.1);
 				normal_y = __min(__max(normal_y, 0.9), 23.1);
 				printf("%lf, %lf\n", normal_x, normal_y);
-				playerX = normal_x;
-				playerY = normal_y;
 			}
 		}
 	}
