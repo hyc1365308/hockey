@@ -67,7 +67,7 @@ int ballKnockWall() {
 }
 
 int scored() {
-	if (tableX / 2 + scoreWidth / 2 >= ballX) && (tableX / 2 - scoreWidth / 2 <= ballX) return 1;
+	if ((tableX / 2 + scoreWidth / 2 >= ballX) && (tableX / 2 - scoreWidth / 2 <= ballX)) return 1;
 	return 0;
 }
 

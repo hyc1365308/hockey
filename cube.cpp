@@ -1,13 +1,12 @@
 #define WindowWidth  400  
 #define WindowHeight 400  
 #define WindowTitle  "OpenGL纹理测试"  
-//#define DEBUG
 
 #include <glut.h>  
 #include <stdio.h>  
 #include <stdlib.h> 
 #include <math.h>
-//#include "back.cpp"
+#include "back.h"
 
 //定义两个纹理对象编号  
 GLuint texGround;
@@ -256,11 +255,7 @@ void draw_puck() {
 
 	glPushMatrix();
 	glTranslatef(0.0, 6.6, 0.0);
-#ifdef DEBUG
-	glTranslatef(0, 0.0, 0);
-#else
 	glTranslatef(-6.0 + ballX, 0.0, 12.0 - ballY);
-#endif // DEBUG
 	glRotatef(90.0, 1.0, 0.0, 0.0);
 	glColor3f(1.0f, 0.0f, 0.0f);
 	GLUquadricObj *objCylinder = gluNewQuadric();
@@ -347,15 +342,11 @@ void display(void)
 }
 
 void display_ctl(void) {
-#ifdef DEBUG
-	// do nothing
-#else
 	update();
-#endif // DEBUG
 	display();
 }
 
-void keyboard(unsigned char key, int x, int y) {
+void keyboard(unsigned char key) {
 	switch (key)
 	{
 	case 'a':
