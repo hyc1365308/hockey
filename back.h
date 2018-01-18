@@ -17,6 +17,7 @@ extern double AIY;
 extern double tableX;
 extern double tableY;
 extern double ballSpeed;
+extern double AISpeed;
 extern double ballRadium;
 extern double malletRadium;
 extern double ballXspeed;
