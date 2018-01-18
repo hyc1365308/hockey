@@ -1,19 +1,19 @@
 #include "back.h"
 
-double ballX;
-double ballY;
-double playerX;
-double playerY;
-double AIX;
-double AIY;
-double tableX;
-double tableY;
-double ballSpeed;
-double ballRadium;
-double malletRadium;
-double ballXspeed;
-double ballYspeed;
-double scoreWidth;
+double ballX = 0;
+double ballY = 0;
+double playerX = 0;
+double playerY = 0;
+double AIX = 0;
+double AIY = 0;
+double tableX = 0;
+double tableY = 0;
+double ballSpeed = 0;
+double ballRadium = 0;
+double malletRadium = 0;
+double ballXspeed = 0;
+double ballYspeed = 0;
+double scoreWidth = 0;
 
 int firstInit() {
 	tableY = 4 * SIZEFACTOR;
