@@ -7,6 +7,7 @@
 #include <stdio.h>  
 #include <stdlib.h> 
 #include <math.h>
+#include <time.h>
 #include "back.h"
 
 //定义两个纹理对象编号  
@@ -16,6 +17,7 @@ GLuint texWall;
 #define BMP_Header_Length 54  //图像数据在内存块中的偏移量  
 static GLfloat angle = 0.0f;   //旋转角度  
 const GLfloat pi = 3.1415926536f;
+clock_t sys_time_last, sys_time_now;
 
 int tablepos[4][2] = {
 	112, 316,
@@ -164,6 +166,7 @@ GLuint load_texture(const char* file_name)
 void init() {
 	firstInit();
 	glClearColor(0.0, 0.0, 0.0, 0.0);
+	sys_time_last = clock();
 
 	//申请MAX_CHAR个连续的显示列表编号
 	TextFont = glGenLists(128);
@@ -374,9 +377,26 @@ void display(void)
 }
 
 void display_ctl(void) {
-	playerX = normal_x;
-	playerY = normal_y;
-	if (game_end == 0) {
+	sys_time_now = clock();
+
+	printf("time delta = %d\n", sys_time_now - sys_time_last);
+
+	if ((game_end != 0) || (sys_time_now - sys_time_last < 10)) {
+		display();
+		if (game_end == 2) {
+			glColor3f(0.0, 0.0, 1.0);
+			glRasterPos3f(0.0, 8.0, 0.0);  //起始位置  
+			XPrintString("You win!");
+		}
+		else if (game_end == 3) {
+			glColor3f(0.0, 0.0, 1.0);
+			glRasterPos3f(0.0, 8.0, 0.0);  //起始位置  
+			XPrintString("You lose!");
+		}
+	}
+	else {
+		playerX = normal_x;
+		playerY = normal_y;
 		int code = update();
 		display();
 		if (code == 2) {
@@ -391,18 +411,8 @@ void display_ctl(void) {
 			XPrintString("You lose!");
 			game_end = 3;
 		}
-	}
-	else {
-		display();
-		if (game_end == 2) {
-			glColor3f(0.0, 0.0, 1.0);
-			glRasterPos3f(0.0, 8.0, 0.0);  //起始位置  
-			XPrintString("You win!");
-		}
-		else if (game_end == 3) {
-			glColor3f(0.0, 0.0, 1.0);
-			glRasterPos3f(0.0, 8.0, 0.0);  //起始位置  
-			XPrintString("You lose!");
+		if (sys_time_now - sys_time_last > 10) {
+			sys_time_last = sys_time_now;
 		}
 	}
 	glutSwapBuffers();
