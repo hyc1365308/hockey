@@ -16,7 +16,8 @@ double ballXspeed = 0;
 double ballYspeed = 0;
 double scoreWidth = 0;
 
-int firstInit() {	
+int firstInit() {
+	srand((unsigned)time(NULL));
 	tableX = 2 * SIZEFACTOR;
 	tableY = 4 * SIZEFACTOR;	
 	ballX = tableX / 2;
@@ -29,8 +30,8 @@ int firstInit() {
 	ballRadium = 0.1 * SIZEFACTOR;
 	malletRadium = 0.15 * SIZEFACTOR;
 	AISpeed = 0.01 * SIZEFACTOR;
-	ballXspeed = 0.02;
-	ballYspeed = 0.1 * SIZEFACTOR;
+	ballXspeed = 0;
+	ballYspeed = 0.05 * SIZEFACTOR * (rand() % 2 * 2 - 1);
 	scoreWidth = 0.8 * SIZEFACTOR;
 	return 1;
 }
@@ -41,7 +42,7 @@ int update() {
 	if (AIX >= tableX - malletRadium) AIX -= AISpeed;
 	if (ballX - AIX > 0) AISpeed = abs(AISpeed);
 	if (ballX - AIX < 0) AISpeed = -abs(AISpeed);
-	
+	if (ballY - AIY > 0) AISpeed = -AISpeed;
 	ballX += ballXspeed;
 	ballY += ballYspeed;
 	int status = 0;
