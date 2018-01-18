@@ -16,15 +16,19 @@ double ballYspeed = 0;
 double scoreWidth = 0;
 
 int firstInit() {
-	tableY = 4 * SIZEFACTOR;
 	tableX = 2 * SIZEFACTOR;
+	tableY = 4 * SIZEFACTOR;	
 	ballX = tableX / 2;
 	ballY = tableY / 2;
-	ballSpeed = 0.01 * SIZEFACTOR;
+	AIX = tableX / 2;
+	AIY = tableY / 4 * 3;
+	playerX = tableX / 2;
+	playerY = tableY / 4;
+	ballSpeed = 0.001 * SIZEFACTOR;
 	ballRadium = 0.1 * SIZEFACTOR;
 	malletRadium = 0.15 * SIZEFACTOR;
-	ballXspeed = 0.011 * SIZEFACTOR;
-	ballYspeed = 0.05 * SIZEFACTOR;
+	ballXspeed = 0;
+	ballYspeed = 0.001 * SIZEFACTOR;
 	scoreWidth = 0.8 * SIZEFACTOR;
 	return 1;
 }
@@ -53,7 +57,24 @@ int update() {
 		return CONTINUE;
 	}
 	if (status = ballKnockMallet()) {
-
+		if (status == 1) {
+			ballX -= ballXspeed;
+			ballY -= ballYspeed;
+			ballXspeed = ballSpeed * (ballX - playerX) / (ballRadium + malletRadium);
+			ballYspeed = ballSpeed * (ballY - playerY) / (ballRadium + malletRadium);
+			ballX += ballXspeed;
+			ballY += ballYspeed;
+			return CONTINUE;
+		}
+		if (status == 2) {
+			ballX -= ballXspeed;
+			ballY -= ballYspeed;
+			ballXspeed = ballSpeed * (ballX - AIX) / (ballRadium + malletRadium);
+			ballYspeed = ballSpeed * (ballY - AIY) / (ballRadium + malletRadium);
+			ballX += ballXspeed;
+			ballY += ballYspeed;
+			return CONTINUE;
+		}
 	}
 
 }
@@ -72,6 +93,10 @@ int scored() {
 }
 
 int ballKnockMallet() {
+	if (dist(ballX, playerX, ballY, playerY) <= ballRadium + malletRadium)
+		return 1;
+	if (dist(ballX, AIX, ballY, AIY) <= ballRadium + malletRadium)
+		return 2; 
 	return 0;
 }
 
