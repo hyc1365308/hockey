@@ -165,6 +165,8 @@ GLuint load_texture(const char* file_name)
 
 void init() {
 	firstInit();
+	normal_x = playerX;
+	normal_y = playerY;
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	sys_time_last = clock();
 
