@@ -25,20 +25,22 @@ int firstInit() {
 	AIY = tableY / 4 * 3;
 	playerX = tableX / 2;
 	playerY = tableY / 4;
-	ballSpeed = 0.001 * SIZEFACTOR;
-	AISpeed = 0.005 * SIZEFACTOR;
+	ballSpeed = 0.01 * SIZEFACTOR;
+	AISpeed = 0.001 * SIZEFACTOR;
 	ballRadium = 0.1 * SIZEFACTOR;
 	malletRadium = 0.15 * SIZEFACTOR;
 	ballXspeed = 0;
-	ballYspeed = 0.001 * SIZEFACTOR;
+	ballYspeed = 0.01 * SIZEFACTOR;
 	scoreWidth = 0.8 * SIZEFACTOR;
 	return 1;
 }
 
 int update() {
-	AIY += AISpeed;
-	if (ballY - AIY > 0) AISpeed = abs(AISpeed);
-	if (ballY - AIY < 0) AISpeed = -abs(AISpeed);
+	AIX += AISpeed;
+	if (AIX <= malletRadium) AIX -= AISpeed;
+	if (AIX >= tableX - malletRadium) AIX -= AISpeed;
+	if (ballX - AIX > 0) AISpeed = abs(AISpeed);
+	if (ballX - AIX < 0) AISpeed = -abs(AISpeed);
 	
 	ballX += ballXspeed;
 	ballY += ballYspeed;
