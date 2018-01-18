@@ -25,12 +25,12 @@ int firstInit() {
 	AIY = tableY / 4 * 3;
 	playerX = tableX / 2;
 	playerY = tableY / 4;
-	ballSpeed = 0.01 * SIZEFACTOR;
-	AISpeed = 0.001 * SIZEFACTOR;
+	ballSpeed = 0.05 * SIZEFACTOR;
 	ballRadium = 0.1 * SIZEFACTOR;
 	malletRadium = 0.15 * SIZEFACTOR;
-	ballXspeed = 0;
-	ballYspeed = 0.01 * SIZEFACTOR;
+	AISpeed = 0.01 * SIZEFACTOR;
+	ballXspeed = 0.02;
+	ballYspeed = 0.1 * SIZEFACTOR;
 	scoreWidth = 0.8 * SIZEFACTOR;
 	return 1;
 }

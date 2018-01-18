@@ -3,9 +3,11 @@
 #define WindowTitle  "Hockey"  
 
 #include <glut.h>  
+#include <windows.h>  
 #include <stdio.h>  
 #include <stdlib.h> 
 #include <math.h>
+#include <time.h>
 #include "back.h"
 
 //定义两个纹理对象编号  
@@ -15,6 +17,7 @@ GLuint texWall;
 #define BMP_Header_Length 54  //图像数据在内存块中的偏移量  
 static GLfloat angle = 0.0f;   //旋转角度  
 const GLfloat pi = 3.1415926536f;
+clock_t sys_time_last, sys_time_now;
 
 int tablepos[4][2] = {
 	112, 316,
@@ -22,14 +25,28 @@ int tablepos[4][2] = {
 	244, 116,
 	355, 116,
 };
-int mid = 200;
+int game_end = 0;
 
-							   // 函数power_of_two用于判断一个整数是不是2的整数次幂  
+double normal_x, normal_y;// 暂时存储鼠标的信息
+
+// 函数power_of_two用于判断一个整数是不是2的整数次幂  
 int power_of_two(int n)
 {
 	if (n <= 0)
 		return 0;
 	return (n & (n - 1)) == 0;
+}
+
+GLuint TextFont;
+void XPrintString(char *s)
+{
+	glPushAttrib(GL_LIST_BIT);
+
+	//调用每个字符对应的显示列表，绘制每个字符
+	for (; *s != '\0'; ++s)
+		glCallList(TextFont + *s);
+
+	glPopAttrib();
 }
 
 /* 函数load_texture
@@ -144,6 +161,18 @@ GLuint load_texture(const char* file_name)
 	glBindTexture(GL_TEXTURE_2D, lastTextureID);  //恢复之前的纹理绑定  
 	free(pixels);
 	return texture_ID;
+}
+
+void init() {
+	firstInit();
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	sys_time_last = clock();
+
+	//申请MAX_CHAR个连续的显示列表编号
+	TextFont = glGenLists(128);
+
+	//把每个字符的绘制命令都装到对应的显示列表中
+	wglUseFontBitmaps(wglGetCurrentDC(), 0, 128, TextFont);
 }
 
 void draw_table_sides_1(int i) {
@@ -345,17 +374,54 @@ void display(void)
 	draw_puck();
 	draw_mallet_self();
 	draw_mallet_comp();
-
-	glutSwapBuffers();
 }
 
 void display_ctl(void) {
-	update();
-	display();
+	sys_time_now = clock();
+
+	printf("AIX = %lf, AIY = %lf\n", AIX, AIY);
+
+	if ((game_end != 0) || (sys_time_now - sys_time_last < 10)) {
+		display();
+		if (game_end == 2) {
+			glColor3f(0.0, 0.0, 1.0);
+			glRasterPos3f(0.0, 8.0, 0.0);  //起始位置  
+			XPrintString("You win!");
+		}
+		else if (game_end == 3) {
+			glColor3f(0.0, 0.0, 1.0);
+			glRasterPos3f(0.0, 8.0, 0.0);  //起始位置  
+			XPrintString("You lose!");
+		}
+	}
+	else {
+		playerX = normal_x;
+		playerY = normal_y;
+		int code = update();
+		display();
+		if (code == 2) {
+			glColor3f(0.0, 0.0, 1.0);
+			glRasterPos3f(0.0, 8.0, 0.0);  //起始位置  
+			XPrintString("You win!");
+			game_end = 2;
+		}
+		else if (code == 3) {
+			glColor3f(0.0, 0.0, 1.0);
+			glRasterPos3f(0.0, 8.0, 0.0);  //起始位置  
+			XPrintString("You lose!");
+			game_end = 3;
+		}
+		if (sys_time_now - sys_time_last > 10) {
+			sys_time_last = sys_time_now;
+		}
+	}
+	glutSwapBuffers();
 }
 
 void gameReset() {
 	printf("game reset!\n");
+	firstInit();
+	game_end = 0;
 }
 
 void keyboard(unsigned char key, int x, int y) {
@@ -390,7 +456,7 @@ void mouse(int x, int y) {
 	double k2 = -k1;
 	double b2 = tablepos[1][1] - k2 * tablepos[1][0];
 
-	double normal_x, normal_y;/*
+	/*
 	if (y - k1 * x - b1 < 0) {
 		if (y - k2 * x - b2 < 0) {
 			// 在桌子上边往上
@@ -439,8 +505,6 @@ void mouse(int x, int y) {
 				normal_x = __min(__max(normal_x, 0.9), 11.1);
 				normal_y = __min(__max(normal_y, 0.9), 23.1);
 				printf("%lf, %lf\n", normal_x, normal_y);
-				playerX = normal_x;
-				playerY = normal_y;
 			}
 		}
 	}
@@ -451,11 +515,11 @@ int main(int argc, char* argv[])
 {
 	// GLUT初始化  
 	glutInit(&argc, argv);
-	firstInit();
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 200);
 	glutInitWindowSize(WindowWidth, WindowHeight);
 	glutCreateWindow(WindowTitle);
+	init();
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);    // 启用纹理  
 	texGround = load_texture(".\\floor.bmp");  //加载纹理  
