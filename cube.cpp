@@ -1,6 +1,6 @@
-#define WindowWidth  400  
-#define WindowHeight 400  
-#define WindowTitle  "OpenGL纹理测试"  
+#define WindowWidth  600  
+#define WindowHeight 500  
+#define WindowTitle  "Hockey"  
 
 #include <glut.h>  
 #include <stdio.h>  
@@ -15,6 +15,14 @@ GLuint texWall;
 #define BMP_Header_Length 54  //图像数据在内存块中的偏移量  
 static GLfloat angle = 0.0f;   //旋转角度  
 const GLfloat pi = 3.1415926536f;
+
+int tablepos[4][2] = {
+	112, 316,
+	487, 316,
+	244, 116,
+	355, 116,
+};
+int mid = 200;
 
 							   // 函数power_of_two用于判断一个整数是不是2的整数次幂  
 int power_of_two(int n)
@@ -274,7 +282,7 @@ void draw_mallet_self() {
 
 	glPushMatrix();
 	glTranslatef(0.0, 6.6, 0.0);
-	glTranslatef(0.0, 0.0, 6.0);
+	glTranslatef(playerX - 6.0, 0.0, 12.0 - playerY);
 	glRotatef(90.0, 1.0, 0.0, 0.0);
 	glColor3f(0.0f, 0.0f, 1.0f);
 	GLUquadricObj *objCylinder = gluNewQuadric();
@@ -293,7 +301,7 @@ void draw_mallet_comp() {
 
 	glPushMatrix();
 	glTranslatef(0.0, 6.6, 0.0);
-	glTranslatef(0.0, 0.0, -6.0);
+	glTranslatef(AIX - 6.0, 0.0, 12.0 - AIY);
 	glRotatef(90.0, 1.0, 0.0, 0.0);
 	glColor3f(1.0f, 0.0f, 1.0f);
 	GLUquadricObj *objCylinder = gluNewQuadric();
@@ -346,6 +354,10 @@ void display_ctl(void) {
 	display();
 }
 
+void gameReset() {
+	printf("game reset!\n");
+}
+
 void keyboard(unsigned char key, int x, int y) {
 	switch (key)
 	{
@@ -359,7 +371,80 @@ void keyboard(unsigned char key, int x, int y) {
 		angle = (angle - 2.0);
 		if (angle <= 0.0f) angle += 360.0f;
 		break;
+	case char(13):
+		gameReset();
 	}
+}
+
+void mouse(int x, int y) {
+	printf("%d, %d\n", x, y);
+	//先判断是否在规定区域里
+	if (y > tablepos[0][1]) {
+		y = tablepos[0][1];
+	}
+	if (y < tablepos[2][1]) {
+		y = tablepos[2][1];
+	}
+	double k1 = - 200.0 / 132.0;
+	double b1 = tablepos[0][1] - k1 * tablepos[0][0];
+	double k2 = -k1;
+	double b2 = tablepos[1][1] - k2 * tablepos[1][0];
+
+	double normal_x, normal_y;/*
+	if (y - k1 * x - b1 < 0) {
+		if (y - k2 * x - b2 < 0) {
+			// 在桌子上边往上
+			// 直接固定在上侧中间
+			normal_x = 6.0;
+			normal_y = 11.0;
+		}
+		else {
+			normal_x = 12.0 - 0.9;
+			normal_y = 11.0;
+		}
+	}
+	else {
+		if (y - k2 * x - b2 < 0) {
+			// 在桌子上边往上
+			// 直接固定在上侧右边
+			normal_x = 0.9;
+			normal_y = 11.0;
+		}
+		else {
+			if (y < 250) {
+				//在对方半场
+				normal_x = 6.0;
+				normal_y = 11.0;
+			}else if (y > 316) {
+				//在我方半场往下
+				normal_x = 6.0;
+				normal_y = 0.9;
+			}else {
+				//正常位置
+				normal_y = (316 - y) / 200.0 * 24.0;
+				double x_left = (y - b1) / k1;
+				double x_right = (y - b2) / k2;
+				normal_x = (x - x_left) / (x_right - x_left) * 12.0;
+			}
+		}
+	}*/
+	if (y - k1 * x - b1 > 0) {
+		if (y - k2 * x - b2 > 0) {
+			if (y >= 250 && y <= 316) {
+				//正常位置
+				normal_y = (316 - y) / 200.0 * 24.0;
+				double x_left = (y - b1) / k1;
+				double x_right = (y - b2) / k2;
+				normal_x = (x - x_left) / (x_right - x_left) * 12.0;
+				normal_x = __min(__max(normal_x, 0.9), 11.1);
+				normal_y = __min(__max(normal_y, 0.9), 23.1);
+				printf("%lf, %lf\n", normal_x, normal_y);
+				playerX = normal_x;
+				playerY = normal_y;
+			}
+		}
+	}
+	
 }
 
 int main(int argc, char* argv[])
@@ -378,6 +463,7 @@ int main(int argc, char* argv[])
 	glutDisplayFunc(&display_ctl);   //注册函数   
 	glutIdleFunc(&display_ctl);
 	glutKeyboardFunc(keyboard);
+	glutPassiveMotionFunc(mouse);
 	glutMainLoop(); //循环调用  
 	return 0;
 }
