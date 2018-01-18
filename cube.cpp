@@ -3,6 +3,7 @@
 #define WindowTitle  "Hockey"  
 
 #include <glut.h>  
+#include <windows.h>  
 #include <stdio.h>  
 #include <stdlib.h> 
 #include <math.h>
@@ -24,12 +25,24 @@ int tablepos[4][2] = {
 };
 int mid = 200;
 
-							   // 函数power_of_two用于判断一个整数是不是2的整数次幂  
+// 函数power_of_two用于判断一个整数是不是2的整数次幂  
 int power_of_two(int n)
 {
 	if (n <= 0)
 		return 0;
 	return (n & (n - 1)) == 0;
+}
+
+GLuint TextFont;
+void XPrintString(char *s)
+{
+	glPushAttrib(GL_LIST_BIT);
+
+	//调用每个字符对应的显示列表，绘制每个字符
+	for (; *s != '\0'; ++s)
+		glCallList(TextFont + *s);
+
+	glPopAttrib();
 }
 
 /* 函数load_texture
@@ -144,6 +157,17 @@ GLuint load_texture(const char* file_name)
 	glBindTexture(GL_TEXTURE_2D, lastTextureID);  //恢复之前的纹理绑定  
 	free(pixels);
 	return texture_ID;
+}
+
+void init() {
+	firstInit();
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+
+	//申请MAX_CHAR个连续的显示列表编号
+	TextFont = glGenLists(128);
+
+	//把每个字符的绘制命令都装到对应的显示列表中
+	wglUseFontBitmaps(wglGetCurrentDC(), 0, 128, TextFont);
 }
 
 void draw_table_sides_1(int i) {
@@ -345,13 +369,22 @@ void display(void)
 	draw_puck();
 	draw_mallet_self();
 	draw_mallet_comp();
-
-	glutSwapBuffers();
 }
 
 void display_ctl(void) {
-	update();
+	int code = update();
 	display();
+	if (code == 2) {
+		glColor3f(0.0, 0.0, 1.0);
+		glRasterPos3f(0.0, 8.0, 0.0);  //起始位置  
+		XPrintString("You win!");
+	}
+	else if (code == 3) {
+		glColor3f(0.0, 0.0, 1.0);
+		glRasterPos3f(0.0, 8.0, 0.0);  //起始位置  
+		XPrintString("You lose!");
+	}
+	glutSwapBuffers();
 }
 
 void gameReset() {
@@ -451,11 +484,11 @@ int main(int argc, char* argv[])
 {
 	// GLUT初始化  
 	glutInit(&argc, argv);
-	firstInit();
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 200);
 	glutInitWindowSize(WindowWidth, WindowHeight);
 	glutCreateWindow(WindowTitle);
+	init();
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);    // 启用纹理  
 	texGround = load_texture(".\\floor.bmp");  //加载纹理  
