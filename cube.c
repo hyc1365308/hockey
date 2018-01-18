@@ -6,7 +6,7 @@
 #include <stdio.h>  
 #include <stdlib.h> 
 #include <math.h>
-//#include "back.cpp"
+#include "back.h"
 
 //定义两个纹理对象编号  
 GLuint texGround;
