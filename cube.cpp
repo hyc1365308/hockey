@@ -379,7 +379,7 @@ void display(void)
 void display_ctl(void) {
 	sys_time_now = clock();
 
-	printf("time delta = %d\n", sys_time_now - sys_time_last);
+	printf("AIX = %lf, AIY = %lf\n", AIX, AIY);
 
 	if ((game_end != 0) || (sys_time_now - sys_time_last < 10)) {
 		display();
@@ -420,6 +420,7 @@ void display_ctl(void) {
 
 void gameReset() {
 	printf("game reset!\n");
+	firstInit();
 	game_end = 0;
 }
 
